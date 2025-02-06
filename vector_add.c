@@ -6,9 +6,9 @@
 
 #include <arm_neon.h> // For NEON intrinsic functions
 
-#define VECTOR_SIZE 100000000
+#define VECTOR_SIZE 100000000 // 0.1 Billion Array 
 
-// 메모리 초기화 함수
+// Memory Init
 void initialize_vectors(float *a, float *b, float *c, size_t size) {
     for (size_t i = 0; i < size; ++i) {
         a[i] = (float)i;
@@ -17,7 +17,7 @@ void initialize_vectors(float *a, float *b, float *c, size_t size) {
     }
 }
 
-// 대역폭 측정 함수
+// Bandwidth Measurment
 void measure_bandwidth(size_t bytes, double elapsed_time) {
     double bandwidth = (double)bytes / (elapsed_time * 1e9); // GB/s
     printf("Data Size: %zu bytes\n", bytes);
@@ -25,7 +25,7 @@ void measure_bandwidth(size_t bytes, double elapsed_time) {
     printf("Bandwidth: %.6f GB/s\n", bandwidth);
 }
 
-// 벡터 덧셈 함수
+// Vector Addition
 void vector_addition(float *a, float *b, float *c, size_t size) {
     size_t i;
     for (i = 0; i + 4 <= size; i += 4) {
@@ -35,7 +35,7 @@ void vector_addition(float *a, float *b, float *c, size_t size) {
         vst1q_f32(&c[i], vc); // Store 4 floats into c[i]
     }
 
-    // 남은 요소 처리
+    // Procsssing of remaining elements (Not a multiple of 4)
     for (; i < size; ++i) {
         c[i] = a[i] + b[i];
     }
@@ -61,9 +61,6 @@ int main() {
 
     double elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
     measure_bandwidth(VECTOR_SIZE * sizeof(float) * 3, elapsed_time);
-
-    // 결과 확인 (테스트용)
-    printf("c[0] = %f, c[%zu] = %f\n", c[0], VECTOR_SIZE - 1, c[VECTOR_SIZE - 1]);
 
     free(a);
     free(b);
